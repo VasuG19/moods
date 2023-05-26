@@ -1,0 +1,62 @@
+html {
+  font-family: "Lucida Sans", sans-serif;
+}
+
+header {
+  background-color: #9933cc;
+  color: #ffffff;
+  padding: 15px;
+}
+
+main{
+display: block;
+height: 70%;
+width: 100%;
+margin-left: 10px;
+}
+
+
+footer {
+  background-color: #0099cc;
+  color: #ffffff;
+  text-align: center;
+  font-size: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  display:block;
+  clear:both;
+}
+
+#container{
+  padding: 50px;
+}
+
+#btnGetDirections{
+display: block;
+margin-bottom: 10px;
+}
+
+#map-area {
+float: left;
+width:500px; 
+height: 500px;
+margin-bottom:10px;
+margin-right: 10px;
+
+}
+
+#directionsPanel{
+float:left;
+width:30%;
+height: 100%;
+}
+
+#distance-dl dt{
+font-weight:bold;
+}
+
+#tweets{
+  width: 50%;
+}
+
+
