@@ -55,6 +55,28 @@ $(document).ready(function(){
         avoidTolls: false
       //when the service responds run the callback function
     }, callback);
+
+    let infoWindow = new google.maps.InfoWindow({
+      content: "Click the map to get Lat/Lng!",
+      position: myLatlng,
+    });
+
+    infoWindow.open(map);
+    // Configure the click listener.
+    map.addListener("click", (mapsMouseEvent) => {
+      // Close the current InfoWindow.
+      infoWindow.close();
+      // Create a new InfoWindow.
+      infoWindow = new google.maps.InfoWindow({
+        position: mapsMouseEvent.latLng,
+      });
+      infoWindow.setContent(
+        JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+      );
+      infoWindow.open(map);
+      
+    });
+
   }
 
   // add marker function
@@ -137,6 +159,39 @@ $(document).ready(function(){
 
           if (val.place) {
             items.push("<dd>" + val.place.name + "</dd>" + "<dd>" + val.place.country + "</dd> <hr>");
+
+              // Create a geocoder instance
+              var geocoder = new google.maps.Geocoder();
+
+              // Make a geocoding request
+              geocoder.geocode({ address: val.place.name }, function(results, status) {
+                if (status === 'OK') {
+                  // Retrieve the first result
+                  var location = results[0].geometry.location;
+
+                  var marker = new google.maps.Marker({
+                    position: location,
+                    label: labels[labelIndex++ % labels.length],
+                    draggable: true,
+                    animation: google.maps.Animation.DROP,
+                    map: map,
+                  });
+
+                  var infoWindow = new google.maps.InfoWindow({
+                      content: "<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>" + "<dd>" 
+                                    + val.place.name + "</dd>" + "<dd>" + val.place.country + "</dd>"
+                  });
+
+                  marker.addListener("mouseover", function() {
+                    infoWindow.open(map, marker);
+                  });
+
+                  marker.addListener("mouseout", function() {
+                    infoWindow.close();
+                  });
+                }
+              });
+                  
           } else {
             // Handle the case when val.place is null or undefined
             items.push("<dd>Place Unavailable</dd>");
@@ -148,7 +203,6 @@ $(document).ready(function(){
             console.log("tweet: " + val.text);
           }
         });
-
 
         $( "<dl/>", {
           "class": "tweet-list",
