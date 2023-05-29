@@ -1,17 +1,14 @@
 //use jQuery to assess when the document is ready 
 $(document).ready(function(){
-  let origin1="";
-  let destinationA="";
+  let origin="NE1 8ST";
+  let destination="NE25 9QJ";
   let map;
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   var markers = [];
   var bounds = new google.maps.LatLngBounds(); // Declare the 'bounds' variable here
 
-  initMap();		
-  loadData();
-
-  function initMap(){
+  async function initMap(){
     
     let myLatlng = new google.maps.LatLng( 54.9712913, -1.6175957);
     let mapOptions = {
@@ -27,52 +24,50 @@ $(document).ready(function(){
 
     map = new google.maps.Map(document.getElementById("map-area"), mapOptions);	
     
-    origin1 = "Haymarket, Newcastle upon Tyne";
-    destinationA = "Central Station, Newcastle upon Tyne";
-
     //create a new instance of the DistanceMatrixService
     let service = new google.maps.DistanceMatrixService();
 
     //call the getDistanceMatrix method on the DistanceMatrixService
     service.getDistanceMatrix(
     {
-        origins: [origin1],
-        destinations: [destinationA],
+        origins: [origin],
+        destinations: [destination],
         travelMode: google.maps.TravelMode.WALKING,
         unitSystem: google.maps.UnitSystem.IMPERIAL,		
         avoidHighways: false,
         avoidTolls: false
       //when the service responds run the callback function
     }, callback);
-
-    updateMapBounds(); // Call the function to update the map bounds
+    
+    // Call the function to update the map bounds
+    updateMapBounds(); 
 
   }
 
   //get the response and status details from the call to the getDistanceMatrix
   function callback(response, status) {
-      if (status == google.maps.DistanceMatrixStatus.OK) {      
-        let origins = response.originAddresses;
-        let destinations = response.destinationAddresses;
-      $.each(origins, function (originIndex){
-        let results = response.rows[originIndex].elements;
-        $.each(results, function (resultIndex){
-          let element = results[resultIndex];
-          let distance = element.distance.text;
-                let duration = element.duration.text;
-                let from = origins[originIndex];
-                let to = destinations[resultIndex];
-            $("#distance-info").prepend("<dl id='distance-dl'><dt>Distance: </dt><dd>" + distance + "</dd> <dt>Duration: </dt><dd>" + duration + "</dd> <dt>From: </dt><dd>" + from + "</dd> <dt>To: </dt><dd>" + to + "</dd> </dl>");
-        });
+    if (status == google.maps.DistanceMatrixStatus.OK) {      
+      let origins = response.originAddresses;
+      let destinations = response.destinationAddresses;
+    $.each(origins, function (originIndex){
+      let results = response.rows[originIndex].elements;
+      $.each(results, function (resultIndex){
+        let element = results[resultIndex];
+        let distance = element.distance.text;
+              let duration = element.duration.text;
+              let from = origins[originIndex];
+              let to = destinations[resultIndex];
+          $("#distance-info").prepend("<dl id='distance-dl'><dt>Distance: </dt><dd>" + distance + "</dd> <dt>Duration: </dt><dd>" + duration + "</dd> <dt>From: </dt><dd>" + from + "</dd> <dt>To: </dt><dd>" + to + "</dd> </dl>");
       });
-    }
+    });
   }
-  
+}
+
   $("#btnGetDirections").click(function(){
     console.log("get directions");
     let request = {
-      origin: origin1,
-      destination: destinationA,
+      origin: origin,
+      destination: destination,
       travelMode: google.maps.TravelMode.WALKING
     };
     
@@ -95,6 +90,7 @@ $(document).ready(function(){
       }
     });
   });
+
 
   function loadData() {
     $.getJSON("/data/kf6013_assignment_data.json", function(data) {
@@ -197,7 +193,6 @@ $(document).ready(function(){
       console.log("An error has occurred.");
     });
   }
-  
 
   function updateMapBounds() {
     bounds = new google.maps.LatLngBounds();
@@ -209,5 +204,8 @@ $(document).ready(function(){
   
     map.fitBounds(bounds);
   }
+
+  initMap();		
+  loadData();
 
 });
