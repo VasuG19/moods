@@ -5,15 +5,19 @@ $(document).ready(function(){
   let map;
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
+  var markers = [];
+  var bounds = new google.maps.LatLngBounds(); // Declare the 'bounds' variable here
+  var image ="";
 
   initMap();		
   loadData();
 
   function initMap(){
+    
     let myLatlng = new google.maps.LatLng( 54.9712913, -1.6175957);
     let mapOptions = {
       center: myLatlng,
-      zoom: 16,
+      zoom:100,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       streetViewControl: true,
       overviewMapControl: false,
@@ -32,15 +36,6 @@ $(document).ready(function(){
     });
     addMarker(myLatlng, map);
 
-    const image = "./images/pizza.png";
-    const marker =  new google.maps.Marker({
-      position: myLatlng,
-      map,
-      icon: image,
-      title: "My Delhi",
-    });
-    marker.setMap(map);
-
     //create a new instance of the DistanceMatrixService
     let service = new google.maps.DistanceMatrixService();
 
@@ -56,26 +51,7 @@ $(document).ready(function(){
       //when the service responds run the callback function
     }, callback);
 
-    let infoWindow = new google.maps.InfoWindow({
-      content: "Click the map to get Lat/Lng!",
-      position: myLatlng,
-    });
-
-    infoWindow.open(map);
-    // Configure the click listener.
-    map.addListener("click", (mapsMouseEvent) => {
-      // Close the current InfoWindow.
-      infoWindow.close();
-      // Create a new InfoWindow.
-      infoWindow = new google.maps.InfoWindow({
-        position: mapsMouseEvent.latLng,
-      });
-      infoWindow.setContent(
-        JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
-      );
-      infoWindow.open(map);
-      
-    });
+    updateMapBounds(); // Call the function to update the map bounds
 
   }
 
@@ -137,82 +113,117 @@ $(document).ready(function(){
     });
   });
 
-  function loadData(){
-
-    $.getJSON("/data/twitter_workshop.json", function(data){
-      //access the Twitter data and do something with it here
-
-        console.log("Data loaded correctly");
-        console.log("There are " + data.statuses.length + " Twitter statuses within the dataset");
-
-        $("main").prepend("<p>There are " + data.statuses.length + " Twitter statuses within the dataset</p>")
-
-        $.each( data.statuses, function( key, val ) {
-          console.log("username:" + val.user.name);
-          console.log( "tweet:" + val.text);
-        });
-
-        // create an array to store your data in
-        var items = [];
-        $.each(data.statuses, function(key, val) {
-          items.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
-
-          if (val.place) {
-            items.push("<dd>" + val.place.name + "</dd>" + "<dd>" + val.place.country + "</dd> <hr>");
-
-              // Create a geocoder instance
-              var geocoder = new google.maps.Geocoder();
-
-              // Make a geocoding request
-              geocoder.geocode({ address: val.place.name }, function(results, status) {
-                if (status === 'OK') {
-                  // Retrieve the first result
-                  var location = results[0].geometry.location;
-
-                  var marker = new google.maps.Marker({
-                    position: location,
-                    label: labels[labelIndex++ % labels.length],
-                    draggable: true,
-                    animation: google.maps.Animation.DROP,
-                    map: map,
-                  });
-
-                  var infoWindow = new google.maps.InfoWindow({
-                      content: "<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>" + "<dd>" 
-                                    + val.place.name + "</dd>" + "<dd>" + val.place.country + "</dd>"
-                  });
-
-                  marker.addListener("mouseover", function() {
-                    infoWindow.open(map, marker);
-                  });
-
-                  marker.addListener("mouseout", function() {
-                    infoWindow.close();
-                  });
-                }
-              });
-                  
+  function loadData() {
+    $.getJSON("/data/kf6013_assignment_data.json", function(data) {
+      // Access the Twitter data and do something with it here
+  
+      console.log("Data loaded correctly");
+      console.log("There are " + data.statuses.length + " Twitter statuses within the dataset");
+    
+      // Create an array to store the filtered data in
+      var filteredItems = [];
+      $.each(data.statuses, function(key, val) {
+        if (val.text.includes("#climatechange") || val.text.includes("#netzero")) {
+          filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
+          if (val.user.location) {
+            filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
           } else {
             // Handle the case when val.place is null or undefined
-            items.push("<dd>Place Unavailable</dd>");
-            items.push("<dd>Country Unavailable</dd>");
+            filteredItems.push("<dd>Place Unavailable</dd>");
+            filteredItems.push("<dd>Country Unavailable</dd><hr>");
+          }
+        }
+  
+  
+        if (val.user.location) {
+  
+          var image; // Define the image variable within the scope
+  
+          if (val.text.includes("#climatechange") && val.text.includes("#netzero")) {
+            // If both climate change and net zero are present
+            image = "./images/combined.png";
+          } 
+          
+          if (val.text.includes("#climatechange") && !val.text.includes("#netzero")) {
+            // If climate change is present but net zero is not
+            image = "./images/climatechange.png";
           }
 
-          if (val.text.includes("#love") && val.text.includes("#food")) {
-            console.log("username: " + val.user.name);
-            console.log("tweet: " + val.text);
+          if (val.text.includes("#netzero") && !val.text.includes("#climatechange")) {
+            // If net zero is present but climate change is not
+            image = "./images/netzero.png";
           }
-        });
-
-        $( "<dl/>", {
-          "class": "tweet-list",
-          html: items.join( "" )
-        }).appendTo( "#tweets" );
-
-      }).fail(function(){
-        console.log("An error has occurred.");
+  
+          // Create a geocoder instance
+          var geocoder = new google.maps.Geocoder();
+  
+          // Make a geocoding request
+          geocoder.geocode({ address: val.user.location }, function(results, status) {
+            if (status === "OK") {
+              // Retrieve the first result
+              var location = results[0].geometry.location;
+  
+              var marker = new google.maps.Marker({
+                position: location,
+                icon: image,
+                label: labels[labelIndex++ % labels.length],
+                draggable: false,
+                animation: google.maps.Animation.DROP,
+                map: map,
+              });
+  
+              markers.push(marker)
+              bounds.extend(marker.getPosition());
+  
+              var infoWindow = new google.maps.InfoWindow({
+                content:
+                  "<dt>" +
+                  val.user.name +
+                  "</dt>" +
+                  "<dd>" +
+                  val.text +
+                  "</dd>" +
+                  "<dd>" +
+                  val.user.location +
+                  "</dd>"
+              });
+  
+              marker.addListener("mouseover", function() {
+                infoWindow.open(map, marker);
+              });
+  
+              marker.addListener("mouseout", function() {
+                infoWindow.close();
+              });
+            }
+          });
+        }
+      });
+  
+  
+      $("<dl/>", {
+        class: "tweet-list",
+        html: filteredItems.join(""),
+      }).appendTo("#tweets");
+  
+      updateMapBounds(); // Call the function to update the map bounds
+      console.log("Filtered tweets with #climatechange and/or #netzero:");
+      console.log(filteredItems);
+    }).fail(function() {
+      console.log("An error has occurred.");
     });
   }
+  
 
+  function updateMapBounds() {
+    bounds = new google.maps.LatLngBounds();
+  
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+      bounds.extend(markers[i].getPosition());
+    }
+  
+    map.fitBounds(bounds);
+  }
 
 });

@@ -12,7 +12,7 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
 </head>
-<body>
+<body style="background-color:#33475b">
 	<header><h1>Weather, directions and tweets</h1></header>
 <main>
 
@@ -24,16 +24,22 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBheRpxkKxog-dafcCU6Fz_cIFxU8OJsX8&callback=initMap" async defer></script>
 
     <div id="container">
+        <div id="map-area" ></div>
 
-        
-        <div id="distance-info"></div>
-		<button id="btnGetDirections" type="button">Get Directions</button>
-        
-        <div id="map-area"></div>
-        <div id="directionsPanel"></div>
+        <div class="card">
+            <div id="distance-info"></div>
+            <button id="btnGetDirections" class="btn btn-primary" type="button">Get Directions</button>
+        </div>
         
         
-        <div id="tweets"></div>
+        <div class="card">
+            <div id="directionsPanel"></div>
+        </div>
+        
+        <div class="card">
+            <div id="tweets"></div>
+        </div>
+
     </div>
 
 </main>
