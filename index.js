@@ -7,7 +7,6 @@ $(document).ready(function(){
   let labelIndex = 0;
   var markers = [];
   var bounds = new google.maps.LatLngBounds(); // Declare the 'bounds' variable here
-  var image ="";
 
   initMap();		
   loadData();
@@ -31,11 +30,6 @@ $(document).ready(function(){
     origin1 = "Haymarket, Newcastle upon Tyne";
     destinationA = "Central Station, Newcastle upon Tyne";
 
-    google.maps.event.addListener(map, "click", (event) => {
-      addMarker(event.latLng, map);
-    });
-    addMarker(myLatlng, map);
-
     //create a new instance of the DistanceMatrixService
     let service = new google.maps.DistanceMatrixService();
 
@@ -53,17 +47,6 @@ $(document).ready(function(){
 
     updateMapBounds(); // Call the function to update the map bounds
 
-  }
-
-  // add marker function
-  function addMarker(location, map) {
-    new google.maps.Marker({
-      position: location,
-      label: labels[labelIndex++ % labels.length],
-      draggable:true,
-      animation: google.maps.Animation.DROP,
-      map: map,
-    });
   }
 
   //get the response and status details from the call to the getDistanceMatrix
@@ -139,17 +122,13 @@ $(document).ready(function(){
   
           var image; // Define the image variable within the scope
   
-          if (val.text.includes("#climatechange") && val.text.includes("#netzero")) {
+          if (val.text.includes("#climatechange") && val.text.includes("#NetZero")) {
             // If both climate change and net zero are present
             image = "./images/combined.png";
-          } 
-          
-          if (val.text.includes("#climatechange") && !val.text.includes("#netzero")) {
+          } else if (val.text.includes("#climatechange") && !val.text.includes("#NetZero")) {
             // If climate change is present but net zero is not
             image = "./images/climatechange.png";
-          }
-
-          if (val.text.includes("#netzero") && !val.text.includes("#climatechange")) {
+          } else if (val.text.includes("#NetZero") && !val.text.includes("#climatechange")) {
             // If net zero is present but climate change is not
             image = "./images/netzero.png";
           }
