@@ -106,29 +106,31 @@ $(document).ready(function(){
       // Create an array to store the filtered data in
       var filteredItems = [];
       $.each(data.statuses, function(key, val) {
-        if (val.text.includes("#climatechange") || val.text.includes("#netzero")) {
+
+        // add tweets with specific hashtag to list
+        if (val.text.includes("#climatechange") || val.text.includes("#NetZero")) {
           filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
           if (val.user.location) {
             filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
           } else {
             // Handle the case when val.place is null or undefined
-            filteredItems.push("<dd>Place Unavailable</dd>");
-            filteredItems.push("<dd>Country Unavailable</dd><hr>");
+            filteredItems.push("<dd>location Unavailable</dd><hr>");
           }
         }
   
-  
+        // add all tweets with a location to the map
         if (val.user.location) {
+          console.log("adding location to map", val.user.location)
   
           var image; // Define the image variable within the scope
   
           if (val.text.includes("#climatechange") && val.text.includes("#NetZero")) {
             // If both climate change and net zero are present
             image = "./images/combined.png";
-          } else if (val.text.includes("#climatechange") && !val.text.includes("#NetZero")) {
+          } else if (val.text.includes("#climatechange")) {
             // If climate change is present but net zero is not
             image = "./images/climatechange.png";
-          } else if (val.text.includes("#NetZero") && !val.text.includes("#climatechange")) {
+          } else if (val.text.includes("#NetZero")) {
             // If net zero is present but climate change is not
             image = "./images/netzero.png";
           }
@@ -176,7 +178,9 @@ $(document).ready(function(){
               });
             }
           });
+
         }
+
       });
   
   
@@ -185,9 +189,10 @@ $(document).ready(function(){
         html: filteredItems.join(""),
       }).appendTo("#tweets");
   
-      updateMapBounds(); // Call the function to update the map bounds
       console.log("Filtered tweets with #climatechange and/or #netzero:");
-      console.log(filteredItems);
+
+      updateMapBounds(); // Call the function to update the map bounds
+
     }).fail(function() {
       console.log("An error has occurred.");
     });
