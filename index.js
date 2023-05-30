@@ -26,17 +26,6 @@ $(document).ready(function(){
     
     //create a new instance of the DistanceMatrixService
     let service = new google.maps.DistanceMatrixService();
-
-    //call the getDistanceMatrix method on the DistanceMatrixService
-    service.getDistanceMatrix({
-        origins: [origin],
-        destinations: [destination],
-        travelMode: google.maps.TravelMode.WALKING,
-        unitSystem: google.maps.UnitSystem.IMPERIAL,		
-        avoidHighways: false,
-        avoidTolls: false
-      //when the service responds run the callback function
-    });
     
     // Call the function to update the map bounds
     updateMapBounds();
