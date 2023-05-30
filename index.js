@@ -30,7 +30,7 @@ $(document).ready(function(){
   }
 
   function loadData() {
-    $.getJSON("/data/kf6013_assignment_data.json", function(data) {
+    $.getJSON("./data/kf6013_assignment_data.json", function(data) {
       // Access the Twitter data and do something with it here
   
       console.log("Data loaded correctly");
