@@ -134,10 +134,7 @@ $(document).ready(function(){
 
               marker.addListener("click", function() {
                 // Store latitude and longitude in destination variable
-                destination = {
-                  latitude: marker.getPosition().lat(),
-                  longitude: marker.getPosition().lng()
-                };
+                destination = val.user.location;
                 console.log(destination)
               });
   
