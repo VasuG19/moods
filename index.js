@@ -1,7 +1,7 @@
 //use jQuery to assess when the document is ready 
 $(document).ready(function(){
   let origin="NE1 8ST";
-  let destination="NE25 9QJ";
+  let destination="";
   let map;
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
@@ -28,8 +28,7 @@ $(document).ready(function(){
     let service = new google.maps.DistanceMatrixService();
 
     //call the getDistanceMatrix method on the DistanceMatrixService
-    service.getDistanceMatrix(
-    {
+    service.getDistanceMatrix({
         origins: [origin],
         destinations: [destination],
         travelMode: google.maps.TravelMode.WALKING,
@@ -37,31 +36,12 @@ $(document).ready(function(){
         avoidHighways: false,
         avoidTolls: false
       //when the service responds run the callback function
-    }, callback);
+    });
     
     // Call the function to update the map bounds
-    updateMapBounds(); 
+    updateMapBounds();
 
   }
-
-  //get the response and status details from the call to the getDistanceMatrix
-  function callback(response, status) {
-    if (status == google.maps.DistanceMatrixStatus.OK) {      
-      let origins = response.originAddresses;
-      let destinations = response.destinationAddresses;
-    $.each(origins, function (originIndex){
-      let results = response.rows[originIndex].elements;
-      $.each(results, function (resultIndex){
-        let element = results[resultIndex];
-        let distance = element.distance.text;
-              let duration = element.duration.text;
-              let from = origins[originIndex];
-              let to = destinations[resultIndex];
-          $("#distance-info").prepend("<dl id='distance-dl'><dt>Distance: </dt><dd>" + distance + "</dd> <dt>Duration: </dt><dd>" + duration + "</dd> <dt>From: </dt><dd>" + from + "</dd> <dt>To: </dt><dd>" + to + "</dd> </dl>");
-      });
-    });
-  }
-}
 
   $("#btnGetDirections").click(function(){
     console.log("get directions");
@@ -151,6 +131,15 @@ $(document).ready(function(){
   
               markers.push(marker)
               bounds.extend(marker.getPosition());
+
+              marker.addListener("click", function() {
+                // Store latitude and longitude in destination variable
+                destination = {
+                  latitude: marker.getPosition().lat(),
+                  longitude: marker.getPosition().lng()
+                };
+                console.log(destination)
+              });
   
               var infoWindow = new google.maps.InfoWindow({
                 content:
@@ -174,9 +163,7 @@ $(document).ready(function(){
               });
             }
           });
-
         }
-
       });
   
   
