@@ -43,35 +43,6 @@ $(document).ready(function(){
 
   }
 
-  $("#btnGetDirections").click(function(){
-    console.log("get directions");
-    let request = {
-      origin: origin,
-      destination: destination,
-      travelMode: google.maps.TravelMode.WALKING
-    };
-    
-    //add a variable to call the directions service
-    let directionsService = new google.maps.DirectionsService();
-    //add a variable to display the directions
-    let directionsDisplay = new google.maps.DirectionsRenderer();
-    
-    //send the request to the directionService to get the route
-    directionsService.route(request, function(response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-              
-        //set the directionsDisplay to the map object
-        directionsDisplay.setMap(map);
-        
-        //The Google Maps API prefers us to access the element using standard JavaScript
-        directionsDisplay.setPanel(document.getElementById("directionsPanel"));	
-        //now we get the response data from our distance service request and display it on the directions panel
-        directionsDisplay.setDirections(response);							
-      }
-    });
-  });
-
-
   function loadData() {
     $.getJSON("/data/kf6013_assignment_data.json", function(data) {
       // Access the Twitter data and do something with it here
@@ -136,6 +107,32 @@ $(document).ready(function(){
                 // Store latitude and longitude in destination variable
                 destination = val.user.location;
                 console.log(destination)
+
+                console.log("get directions");
+                let request = {
+                  origin: origin,
+                  destination: destination,
+                  travelMode: google.maps.TravelMode.WALKING
+                };
+                
+                //add a variable to call the directions service
+                let directionsService = new google.maps.DirectionsService();
+                //add a variable to display the directions
+                let directionsDisplay = new google.maps.DirectionsRenderer();
+                
+                //send the request to the directionService to get the route
+                directionsService.route(request, function(response, status) {
+                  if (status == google.maps.DirectionsStatus.OK) {
+                          
+                    //set the directionsDisplay to the map object
+                    directionsDisplay.setMap(map);
+                    
+                    //The Google Maps API prefers us to access the element using standard JavaScript
+                    directionsDisplay.setPanel(document.getElementById("directionsPanel"));	
+                    //now we get the response data from our distance service request and display it on the directions panel
+                    directionsDisplay.setDirections(response);							
+                  }
+                });
               });
   
               var infoWindow = new google.maps.InfoWindow({
