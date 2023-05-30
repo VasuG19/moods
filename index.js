@@ -24,9 +24,6 @@ $(document).ready(function(){
 
     map = new google.maps.Map(document.getElementById("map-area"), mapOptions);	
     
-    //create a new instance of the DistanceMatrixService
-    let service = new google.maps.DistanceMatrixService();
-    
     // Call the function to update the map bounds
     updateMapBounds();
 
