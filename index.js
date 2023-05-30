@@ -45,14 +45,9 @@ $(document).ready(function(){
           filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
           if (val.user.location) {
             filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
-          } else {
-            // Handle the case when val.place is null or undefined
-            filteredItems.push("<dd>location Unavailable</dd><hr>");
-          }
-        }
+
   
         // add all tweets with a location to the map
-        if (val.user.location) {
           console.log("adding location to map", val.user.location)
   
           var image; // Define the image variable within the scope
@@ -143,9 +138,12 @@ $(document).ready(function(){
               });
             }
           });
+          } else {
+            // Handle the case when val.place is null or undefined
+            filteredItems.push("<dd>location Unavailable</dd><hr>");
+          }
         }
       });
-  
   
       $("<dl/>", {
         class: "tweet-list",
