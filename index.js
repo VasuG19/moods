@@ -23,7 +23,6 @@ $(document).ready(function(){
 
     map = new google.maps.Map(document.getElementById("map-area"), mapOptions);	
     
- 
   }
 
   function getWeatherData(lat, lng) {
@@ -111,7 +110,6 @@ $(document).ready(function(){
               });
   
               markers.push(marker)
-              marker.getPosition();
 
               marker.addListener("click", function() {
                 // Store latitude and longitude in destination variable
@@ -171,6 +169,7 @@ $(document).ready(function(){
             // Handle the case when val.place is null or undefined
             filteredItems.push("<dd>location Unavailable</dd><hr>");
           }
+
         }
 
       }});
