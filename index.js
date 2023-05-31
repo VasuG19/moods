@@ -29,6 +29,37 @@ $(document).ready(function(){
 
   }
 
+  function getWeatherData(lat, lng) {
+    var lat = 54.977
+    var lng = -1.607
+  $.getJSON(
+    "http://api.geonames.org/findNearByWeatherJSON?lat=" +
+      lat +
+      "&lng=" +
+      lng +
+      "&username=mehtabgill1907",
+    function (result) {
+      console.log(JSON.stringify(result));
+
+      var myObj = result.weatherObservation;
+
+      if (myObj !== null) {
+        $('#weather').empty(); // Clear previous weather data
+        $('#weather').append('<p> Location: ' + myObj.stationName + '</p>');
+        $('#weather').append('<p> clouds: ' + myObj.clouds + '</p>');
+        $('#weather').append('<p>temperature : ' + myObj.temperature + '</p>');
+        $('#weather').append('<p> windspeed: ' + myObj.windspeed + '</p>');
+        $('#weather').append('<p> Conditions: ' + myObj.weatherConditions + '</p>');
+      } else {
+        $('#weather').empty(); // Clear previous weather data
+        $('#weather').append('<p> No data available </p>');
+      }
+      }
+    );
+  }
+
+
+
   function loadData() {
     $.getJSON("./data/kf6013_assignment_data.json", function(data) {
       // Access the Twitter data and do something with it here
@@ -42,6 +73,7 @@ $(document).ready(function(){
 
         // add tweets with specific hashtag to list
         if (val.text.includes("#climatechange") || val.text.includes("#NetZero")) {
+          if (val.user.location && val.user.location.includes("UK")) { // Check if location includes "United Kingdom"
           filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
           if (val.user.location) {
             filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
@@ -100,7 +132,11 @@ $(document).ready(function(){
                 let directionsService = new google.maps.DirectionsService();
                 //add a variable to display the directions
                 let directionsDisplay = new google.maps.DirectionsRenderer();
-                
+
+
+                // Call getWeatherDataByLocation with marker's position
+
+
                 //send the request to the directionService to get the route
                 directionsService.route(request, function(response, status) {
                   if (status == google.maps.DirectionsStatus.OK) {
@@ -143,7 +179,8 @@ $(document).ready(function(){
             filteredItems.push("<dd>location Unavailable</dd><hr>");
           }
         }
-      });
+
+      }});
   
       $("<dl/>", {
         class: "tweet-list",
@@ -172,5 +209,6 @@ $(document).ready(function(){
 
   initMap();		
   loadData();
+  getWeatherData()
 
 });
