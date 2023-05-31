@@ -6,14 +6,13 @@ $(document).ready(function(){
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   var markers = [];
-  var bounds = new google.maps.LatLngBounds(); // Declare the 'bounds' variable here
 
   async function initMap(){
     
     let myLatlng = new google.maps.LatLng( 54.9712913, -1.6175957);
     let mapOptions = {
       center: myLatlng,
-      zoom:100,
+      zoom:5,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       streetViewControl: true,
       overviewMapControl: false,
@@ -24,9 +23,7 @@ $(document).ready(function(){
 
     map = new google.maps.Map(document.getElementById("map-area"), mapOptions);	
     
-    // Call the function to update the map bounds
-    updateMapBounds();
-
+ 
   }
 
   function getWeatherData(lat, lng) {
@@ -114,7 +111,7 @@ $(document).ready(function(){
               });
   
               markers.push(marker)
-              bounds.extend(marker.getPosition());
+              marker.getPosition();
 
               marker.addListener("click", function() {
                 // Store latitude and longitude in destination variable
@@ -132,10 +129,6 @@ $(document).ready(function(){
                 let directionsService = new google.maps.DirectionsService();
                 //add a variable to display the directions
                 let directionsDisplay = new google.maps.DirectionsRenderer();
-
-
-                // Call getWeatherDataByLocation with marker's position
-
 
                 //send the request to the directionService to get the route
                 directionsService.route(request, function(response, status) {
@@ -189,22 +182,9 @@ $(document).ready(function(){
   
       console.log("Filtered tweets with #climatechange and/or #netzero:");
 
-      updateMapBounds(); // Call the function to update the map bounds
-
     }).fail(function() {
       console.log("An error has occurred.");
     });
-  }
-
-  function updateMapBounds() {
-    bounds = new google.maps.LatLngBounds();
-  
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-      bounds.extend(markers[i].getPosition());
-    }
-  
-    map.fitBounds(bounds);
   }
 
   initMap();		
