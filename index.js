@@ -37,12 +37,10 @@ $(document).ready(function(){
 
         // add tweets with specific hashtag to list
         if (val.text.includes("#climatechange") || val.text.includes("#NetZero")) {
-          if (val.user.location && val.user.location.includes("UK")) { // Check if location includes "United Kingdom"
           filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
           if (val.user.location) {
             filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
 
-  
         // add all tweets with a location to the map
           console.log("adding location to map", val.user.location)
   
@@ -62,7 +60,9 @@ $(document).ready(function(){
           $.getJSON(`https://maps.googleapis.com/maps/api/geocode/json?address=${val.user.location}&key=AIzaSyBheRpxkKxog-dafcCU6Fz_cIFxU8OJsX8`
           ,
           function (result) {
-              console.log(result.results[0].geometry.location);
+              console.log(result.results[0]);
+
+          if (result.results[0].formatted_address && result.results[0].formatted_address.includes("UK", "england", "scotland", "wales")){  // Check if location includes "United Kingdom"
   
               var marker = new google.maps.Marker({
                 position: result.results[0].geometry.location,
@@ -87,7 +87,7 @@ $(document).ready(function(){
                   travelMode: google.maps.TravelMode.WALKING
                 };
 
-
+                // Store latitude and longitude 
                 lat = result.results[0].geometry.location.lat
                 lng = result.results[0].geometry.location.lng
                 $.getJSON(
@@ -156,9 +156,10 @@ $(document).ready(function(){
                 infoWindow.close();
               });
             }
+            }
           );
 
-
+            // code was inspired from a workshop
             $.getJSON(
               "http://api.geonames.org/findNearByWeatherJSON?lat=" +
                 lat +
@@ -184,7 +185,9 @@ $(document).ready(function(){
 
         }
 
-      }}});
+      
+    }
+  });
   
       $("<dl/>", {
         class: "tweet-list",
