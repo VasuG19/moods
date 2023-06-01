@@ -57,20 +57,27 @@
                 <input class="btn btn-primary" type='submit' name='signOut' value='Sign Out' />
             </form>
         </div>
-        
+
         <div class="options">
-            <a href="about.php" class="btn btn-primary">About page</a> <!-- Added link to about page -->
+            <a href="about.html" class="btn btn-primary">About Us</a> <!-- Added link to about page -->
         </div>
 
-        <div id="container" class="about">
-            <div class="text">
-           <h2> About Us </h2>
+        <div id="container">
 
-            <p> We are a national heritage organisation who has a sustainable objective to be climate positive by 2030. </p>
+            <div class="top">
+                <div id="weather"></div>
 
-            <p> This is a hybrid web application using content from more than one source to create a new service – in this case a website that enables information about
-            climate change to be visualised on a map.</p>
+                <div class="tweets">
+                    <div id="tweets"></div>
+                </div>
             </div>
+            <div id="map-area"></div>
+
+
+            <div>
+                <div id="directionsPanel"></div>
+            </div>
+
         </div>
 
     </main>
