@@ -26,9 +26,15 @@
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBheRpxkKxog-dafcCU6Fz_cIFxU8OJsX8&callback=initMap"
             async defer></script>
 
-        <form action='index.php' method='post'>
-            <input type='submit' name='signOut' value='Sign Out' />
-        </form>
+        <div class="options">
+            <form action='index.php' method='post'>
+                <input class="btn btn-primary" type='submit' name='signOut' value='Sign Out' />
+            </form>
+        </div>
+
+        <div class="options">
+            <a href="about.html" class="btn btn-primary">About Us</a> <!-- Added link to about page -->
+        </div>
 
         <div id="container">
 
