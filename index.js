@@ -6,6 +6,8 @@ $(document).ready(function(){
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   var markers = [];
+  var lat = 54.977
+  var lng = -1.607
 
   async function initMap(){
     
@@ -23,40 +25,6 @@ $(document).ready(function(){
 
     map = new google.maps.Map(document.getElementById("map-area"), mapOptions);	
     
-  }
-
-  function getWeatherData(lat, lng) {
-    var lat = 54.977
-    var lng = -1.607
-  $.getJSON(
-    "http://api.geonames.org/findNearByWeatherJSON?lat=" +
-      lat +
-      "&lng=" +
-      lng +
-      "&username=mehtabgill1907",
-    function (result) {
-      console.log(JSON.stringify(result));
-
-      var myObj = result.weatherObservation;
-
-      if (myObj !== null) {
-        $('#weather').empty(); // Clear previous weather data
-        $('#weather').append('<p> Location: ' + myObj.stationName + '</p>');
-        $('#weather').append('<p> clouds: ' + myObj.clouds + '</p>');
-        $('#weather').append('<p>temperature : ' + myObj.temperature + '</p>');
-        $('#weather').append('<p> windspeed: ' + myObj.windspeed + '</p>');
-        $('#weather').append('<p> Conditions: ' + myObj.weatherConditions + '</p>');
-      } else {
-        $('#weather').empty(); // Clear previous weather data
-        $('#weather').append('<p> No data available </p>');
-      }
-      }
-    );
-  }
-
-
-
-  function loadData() {
     $.getJSON("./data/kf6013_assignment_data.json", function(data) {
       // Access the Twitter data and do something with it here
   
@@ -90,18 +58,14 @@ $(document).ready(function(){
             // If net zero is present but climate change is not
             image = "./images/netzero.png";
           }
-  
-          // Create a geocoder instance
-          var geocoder = new google.maps.Geocoder();
-  
-          // Make a geocoding request
-          geocoder.geocode({ address: val.user.location }, function(results, status) {
-            if (status === "OK") {
-              // Retrieve the first result
-              var location = results[0].geometry.location;
+
+          $.getJSON(`https://maps.googleapis.com/maps/api/geocode/json?address=${val.user.location}&key=AIzaSyBheRpxkKxog-dafcCU6Fz_cIFxU8OJsX8`
+          ,
+          function (result) {
+              console.log(result.results[0].geometry.location);
   
               var marker = new google.maps.Marker({
-                position: location,
+                position: result.results[0].geometry.location,
                 icon: image,
                 label: labels[labelIndex++ % labels.length],
                 draggable: false,
@@ -122,6 +86,34 @@ $(document).ready(function(){
                   destination: destination,
                   travelMode: google.maps.TravelMode.WALKING
                 };
+
+
+                lat = result.results[0].geometry.location.lat
+                lng = result.results[0].geometry.location.lng
+                $.getJSON(
+                  "http://api.geonames.org/findNearByWeatherJSON?lat=" +
+                    lat +
+                    "&lng=" +
+                    lng +
+                    "&username=mehtabgill1907",
+                  function (result) {
+                    console.log(result);
+
+                    var weather = result.weatherObservation;
+
+                    if (weather !== null) {
+                      $('#weather').empty(); // Clear previous weather data
+                      $('#weather').append('<p> Location: ' + weather.stationName + '</p>');
+                      $('#weather').append('<p> clouds: ' + weather.clouds + '</p>');
+                      $('#weather').append('<p>temperature : ' + weather.temperature + '</p>');
+                    //  $('#weather').append('<p> windspeed: ' + weather.windspeed + '</p>');
+                    //  $('#weather').append('<p> Conditions: ' + weather.weatherConditions + '</p>');
+                    } else {
+                      $('#weather').empty(); // Clear previous weather data
+                      $('#weather').append('<p> No data available </p>');
+                    }
+                  }
+                );
                 
                 //add a variable to call the directions service
                 let directionsService = new google.maps.DirectionsService();
@@ -164,15 +156,35 @@ $(document).ready(function(){
                 infoWindow.close();
               });
             }
-          });
-          } else {
-            // Handle the case when val.place is null or undefined
-            filteredItems.push("<dd>location Unavailable</dd><hr>");
-          }
+          );
+
+
+            $.getJSON(
+              "http://api.geonames.org/findNearByWeatherJSON?lat=" +
+                lat +
+                "&lng=" +
+                lng +
+                "&username=mehtabgill1907",
+              function (result) {
+                console.log(result);
+
+                var myObj = result.weatherObservation;
+
+                if (myObj !== null) {
+                  $('#weather').empty(); // Clear previous weather data
+                  $('#weather').append('<p> Location: ' + myObj.stationName + '</p>');
+                  $('#weather').append('<p> clouds: ' + myObj.clouds + '</p>');
+                  $('#weather').append('<p>temperature : ' + myObj.temperature + '</p>');
+                } else {
+                  $('#weather').empty(); // Clear previous weather data
+                  $('#weather').append('<p> No data available </p>');
+                }
+                }
+              );
 
         }
 
-      }});
+      }}});
   
       $("<dl/>", {
         class: "tweet-list",
@@ -187,7 +199,5 @@ $(document).ready(function(){
   }
 
   initMap();		
-  loadData();
-  getWeatherData()
 
 });
