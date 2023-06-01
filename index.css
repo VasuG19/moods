@@ -3,9 +3,11 @@ html {
 }
 
 header {
-  background-color: #9933cc;
-  color: #ffffff;
+  background-color: #adb1ca;
+  color: #343232;
   padding: 15px;
+  justify-content: center;
+  text-align: center;
 }
 
 footer {
@@ -30,8 +32,6 @@ footer {
 
 #map-area {
   height: 40vh;
-  margin-bottom:10px;
-  margin-right: 10px;
   border-radius: 20px;
 }
 
@@ -48,17 +48,19 @@ footer {
   font-weight:bold;
 }
 
-#tweets{
-  padding: 20px;
-}
-
 .tweets{
   height: 40vh;
+  width: 50%;
   overflow: scroll;
   color: #ffffff;
 }
 
 #weather{
   color: #ffffff;
+  width: 50%;
+}
+
+.top{
+  display: flex;
 }
 
