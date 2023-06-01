@@ -37,9 +37,12 @@ $(document).ready(function(){
 
         // add tweets with specific hashtag to list
         if (val.text.includes("#climatechange") || val.text.includes("#NetZero")) {
+          if (val.user.location && val.user.location.includes("UK")) { // Check if location includes "United Kingdom"
           filteredItems.push("<dt>" + val.user.name + "</dt>" + "<dd>" + val.text + "</dd>");
           if (val.user.location) {
             filteredItems.push("<dd>" + val.user.location + "</dd>" + "<hr>");
+          }
+        }
 
         // add all tweets with a location to the map
           console.log("adding location to map", val.user.location)
@@ -62,7 +65,7 @@ $(document).ready(function(){
           function (result) {
               console.log(result.results[0]);
 
-          if (result.results[0].formatted_address && result.results[0].formatted_address.includes("UK", "england", "scotland", "wales")){  // Check if location includes "United Kingdom"
+          if (result.results[0].formatted_address && result.results[0].formatted_address.includes("UK", "england", "scotland", "wales",)){  // Check if location includes "United Kingdom"
   
               var marker = new google.maps.Marker({
                 position: result.results[0].geometry.location,
@@ -184,9 +187,6 @@ $(document).ready(function(){
               );
 
         }
-
-      
-    }
   });
   
       $("<dl/>", {
