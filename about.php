@@ -1,3 +1,29 @@
+<?php
+
+	// much of this code is taken from the workshops during lectures
+
+	require_once __DIR__.'/vendor/autoload.php';
+	session_start();
+
+	$client = new Google\Client();
+	$client->setAuthConfig('client_secret.json');
+	$client->addScope ("https://www.googleapis.com/auth/userinfo.email");
+
+	if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+		$client->setAccessToken($_SESSION['access_token']);
+	} else {
+		$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php'; 
+		header('Location: ' . filter_var ($redirect_uri, FILTER_SANITIZE_URL));
+	}
+
+	if ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['signOut'])){
+		$client->revokeToken($_SESSION['access_token']);
+		session_destroy();
+		$redirect = 'http://' . $_SERVER['HTTP_HOST'].'/index.php';
+		header('Location: ' . filter_var ($redirect, FILTER_SANITIZE_URL));
+	}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -31,27 +57,20 @@
                 <input class="btn btn-primary" type='submit' name='signOut' value='Sign Out' />
             </form>
         </div>
-
+        
         <div class="options">
-            <a href="about.html" class="btn btn-primary">About Us</a> <!-- Added link to about page -->
+            <a href="index.php" class="btn btn-primary">Home page</a> <!-- Added link to about page -->
         </div>
 
-        <div id="container">
+        <div id="container" class="about">
+            <div class="text">
+           <h2> About Us </h2>
 
-            <div class="top">
-                <div id="weather"></div>
+            <p> We are a national heritage organisation who has a sustainable objective to be climate positive by 2030. </p>
 
-                <div class="tweets">
-                    <div id="tweets"></div>
-                </div>
+            <p> This is a hybrid web application using content from more than one source to create a new service – in this case a website that enables information about
+            climate change to be visualised on a map.</p>
             </div>
-            <div id="map-area"></div>
-
-
-            <div>
-                <div id="directionsPanel"></div>
-            </div>
-
         </div>
 
     </main>
