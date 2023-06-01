@@ -1,25 +1,30 @@
 <?php
 
-	// much of this code is taken from the workshops during lectures
+	// code inspired from workshop code, conducting during in class sessions
 
 	require_once __DIR__.'/vendor/autoload.php';
 	session_start();
 
 	$client = new Google\Client();
+
+    //set the client secret data
 	$client->setAuthConfig('client_secret.json');
+
+    // add a scope for validation
 	$client->addScope ("https://www.googleapis.com/auth/userinfo.email");
 
+    // check whether the user is logged in
 	if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-		$client->setAccessToken($_SESSION['access_token']);
+		$client->setAccessToken($_SESSION['access_token']); // set the user token if the user is authenticated
 	} else {
-		$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php'; 
+		$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php'; // redirect un-authenticated user
 		header('Location: ' . filter_var ($redirect_uri, FILTER_SANITIZE_URL));
 	}
 
-	if ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['signOut'])){
+	if ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['signOut'])){ // sign out function 
 		$client->revokeToken($_SESSION['access_token']);
 		session_destroy();
-		$redirect = 'http://' . $_SERVER['HTTP_HOST'].'/index.php';
+		$redirect = 'http://' . $_SERVER['HTTP_HOST'].'/index.php'; // redirect the user after logging out and destroying the token
 		header('Location: ' . filter_var ($redirect, FILTER_SANITIZE_URL));
 	}
 ?>
@@ -71,6 +76,12 @@
             <p> This is a hybrid web application using content from more than one source to create a new service – in this case a website that enables information about
             climate change to be visualised on a map.</p>
             </div>
+
+           <h2> References</h2>
+            <p>https://www.geonames.org</p>
+            <p>https://developers.google.com/maps</p>
+            <p>https://developer.twitter.com/en/docs/twitter-api</p>
+
         </div>
 
     </main>
