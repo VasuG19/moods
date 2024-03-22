@@ -1,17 +1,19 @@
 //use jQuery to assess when the document is ready 
 $(document).ready(function(){
-  let origin="NE1 8ST";
-  let destination="";
-  let map;
-  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let labelIndex = 0;
-  var markers = [];
-  var lat = 54.977
-  var lng = -1.607
+  let origin="NE1 8ST"; // Define the origin location
+  let destination=""; // Initialize the destination variable
+  let map; // Declare a variable to hold the Google Map object
+  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Define labels for markers
+  let labelIndex = 0; // Initialize the label index for markers
+  var markers = []; // Array to store markers
+  var lat = 54.977; // Initialize latitude
+  var lng = -1.607; // Initialize longitude
 
+  // Function to initialize the Google Map
   async function initMap(){
     
-    let myLatlng = new google.maps.LatLng( 54.9712913, -1.6175957);
+    // Define latitude and longitude for map center
+    let myLatlng = new google.maps.LatLng( 54.9712913, -1.6175957); 
     let mapOptions = {
       center: myLatlng,
       zoom:5,
@@ -60,7 +62,8 @@ $(document).ready(function(){
             image = "./images/netzero.png";
           }
 
-          $.getJSON(`https://maps.googleapis.com/maps/api/geocode/json?address=${val.user.location}&key=AIzaSyBheRpxkKxog-dafcCU6Fz_cIFxU8OJsX8`
+          // Get location details from Google Geocoding API
+          $.getJSON(`https://maps.googleapis.com/maps/api/geocode/json?address=${val.user.location}&key=YOUR_API_KEY`
           ,
           function (result) {
               console.log(result.results[0]);
